@@ -1,0 +1,24 @@
+# Comandos para subir el proyecto a GitHub
+# Usuario: pikogi
+# Repositorio: alquilercordoba
+
+# Paso 1: Inicializar Git (si no está inicializado)
+git init
+
+# Paso 2: Agregar todos los archivos
+git add .
+
+# Paso 3: Hacer commit inicial
+git commit -m "Initial commit: Alquiler Córdoba app"
+
+# Paso 4: Crear repositorio en GitHub primero:
+# Ve a: https://github.com/new
+# Nombre: alquilercordoba
+# NO marques "Initialize with README"
+# Haz clic en "Create repository"
+
+# Paso 5: Conectar y subir (ejecuta después de crear el repo en GitHub)
+git remote add origin https://github.com/pikogi/alquilercordoba.git
+git branch -M main
+git push -u origin main
+

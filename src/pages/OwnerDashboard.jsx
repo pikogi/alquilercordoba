@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Property, auth } from '@/api/client';
-import { Loader2, AlertCircle, Plus, Edit, PlusCircle } from 'lucide-react';
+import { Loader2, AlertCircle, PlusCircle, Edit, Trash2 } from 'lucide-react';
 import CalendarComponent from '@/components/CalendarComponent';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function OwnerDashboard() {
   const [user, setUser] = useState(null);
@@ -12,19 +13,24 @@ export default function OwnerDashboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const loadProperties = async (currentUser) => {
+    try {
+      const res = await Property.filter({ owner_email: currentUser.email });
+      const data = Array.isArray(res) ? res : (res.data || []);
+      setProperties(data);
+    } catch (err) {
+      toast.error(err.message || "Error al cargar propiedades");
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       try {
         const currentUser = await auth.me();
         setUser(currentUser);
-        
-        // Fetch properties owned by this user
-        // We filter by owner_email matches current user email
-        const res = await Property.filter({ owner_email: currentUser.email });
-        const data = Array.isArray(res) ? res : (res.data || []);
-        setProperties(data);
+        await loadProperties(currentUser);
       } catch (e) {
-        // User not logged in, redirect handled by button usually but here we show state
+        // User not logged in
       } finally {
         setLoading(false);
       }
@@ -48,6 +54,17 @@ export default function OwnerDashboard() {
       </div>
     );
   }
+
+  const handleDelete = async (id) => {
+    if (!confirm("¿Seguro que quieres eliminar esta propiedad?")) return;
+    try {
+      await Property.delete(id);
+      toast.success("Propiedad eliminada");
+      await loadProperties(user);
+    } catch (err) {
+      toast.error(err.message || "Error al eliminar propiedad");
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
@@ -79,23 +96,34 @@ export default function OwnerDashboard() {
             <div key={prop.id} className="bg-white border border-neutral-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="flex justify-between items-center p-4 border-b border-neutral-50 bg-neutral-50/50">
                 <div className="flex items-center gap-4">
-                    <img src={prop.cover_image} alt={prop.title} className="w-16 h-16 object-cover rounded-md" />
-                    <div>
+                  <img src={prop.cover_image} alt={prop.title} className="w-16 h-16 object-cover rounded-md" />
+                  <div>
                     <h3 className="font-medium text-lg">{prop.title}</h3>
                     <Link to={`${createPageUrl('PropertyDetail')}?id=${prop.id}`} className="text-xs text-neutral-500 hover:text-neutral-900 underline">
                         Ver publicación
                     </Link>
-                    </div>
+                  </div>
                 </div>
-                <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate(`${createPageUrl('ManageProperty')}?id=${prop.id}`)}
-                    className="text-neutral-500 hover:text-neutral-900"
-                >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Editar
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => navigate(`${createPageUrl('ManageProperty')}?id=${prop.id}`)}
+                      className="text-neutral-500 hover:text-neutral-900"
+                  >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Editar
+                  </Button>
+                  <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(prop.id)}
+                      className="flex items-center"
+                  >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Eliminar
+                  </Button>
+                </div>
               </div>
 
               <div className="p-6">

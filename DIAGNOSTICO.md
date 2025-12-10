@@ -80,3 +80,4 @@ curl -X POST http://localhost:3001/api/auth/login \
   2. Usa: `admin@example.com` / `admin123`
   3. O: `propietario@example.com` / `password123`
 
+

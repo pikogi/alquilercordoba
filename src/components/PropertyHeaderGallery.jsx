@@ -160,7 +160,7 @@ export default function PropertyHeaderGallery({ images = [], title = "Property" 
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-black/90 rounded-full h-12 w-12 backdrop-blur-sm z-[100] shadow-lg"
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-white/70 hover:bg-white/90 rounded-full h-12 w-12 backdrop-blur-sm z-[100] shadow-lg"
                                     onClick={lightboxScrollPrev}
                                 >
                                     <ChevronLeft className="h-8 w-8" />

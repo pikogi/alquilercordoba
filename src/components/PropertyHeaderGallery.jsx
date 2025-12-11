@@ -133,11 +133,11 @@ export default function PropertyHeaderGallery({ images = [], title = "Property" 
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="absolute top-4 right-4 text-white bg-black/70 hover:bg-black/90 rounded-full z-[100] h-12 w-12 backdrop-blur-sm shadow-lg"
+                            className="absolute top-2 right-2 md:top-4 md:right-4 text-white hover:text-white bg-black/70 hover:bg-white/20 rounded-full z-[100] h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm shadow-lg active:bg-black/70"
                             onClick={() => setIsLightboxOpen(false)}
                             aria-label="Close gallery"
                         >
-                            <X className="h-6 w-6" />
+                            <X className="h-6 w-6 md:h-7 md:w-7" />
                         </Button>
 
                         <div className="overflow-hidden w-full h-full" ref={lightboxRef}>
@@ -160,7 +160,7 @@ export default function PropertyHeaderGallery({ images = [], title = "Property" 
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 text-white hover:text-white bg-black/70 hover:bg-white/20 rounded-full h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm z-[100] shadow-lg"
+                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 text-white hover:text-white bg-black/70 hover:bg-white/20 active:bg-black/70 rounded-full h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm z-[100] shadow-lg"
                                     onClick={lightboxScrollPrev}
                                 >
                                     <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
@@ -168,7 +168,7 @@ export default function PropertyHeaderGallery({ images = [], title = "Property" 
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 text-white hover:text-white bg-black/70 hover:bg-white/20 rounded-full h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm z-[100] shadow-lg"
+                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 text-white hover:text-white bg-black/70 hover:bg-white/20 active:bg-black/70 rounded-full h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm z-[100] shadow-lg"
                                     onClick={lightboxScrollNext}
                                 >
                                     <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />

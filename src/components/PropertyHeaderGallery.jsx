@@ -124,21 +124,23 @@ export default function PropertyHeaderGallery({ images = [], title = "Property" 
             {/* Lightbox Dialog */}
             <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
                 <DialogContent 
-                    className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 border-none bg-black/95 rounded-lg md:rounded-2xl focus:outline-none [&>button]:hidden overflow-hidden"
+                    className="max-w-[95vw] max-h-[95vh] p-0 border-none bg-black/95 rounded-lg md:rounded-2xl focus:outline-none [&>button]:hidden overflow-hidden"
+                    aria-describedby="lightbox-description"
                 >
-                    <div className="relative w-full h-full flex items-center justify-center bg-black md:bg-transparent">
+                    <span id="lightbox-description" className="sr-only">Image gallery lightbox</span>
+                    <div className="relative w-full h-[95vh] flex items-center justify-center">
                         {/* Custom Close Button */}
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="absolute top-4 right-4 md:top-6 md:right-6 text-white bg-black/50 hover:bg-black/70 rounded-full z-[160] h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm"
+                            className="absolute top-4 right-4 text-white bg-black/70 hover:bg-black/90 rounded-full z-[100] h-12 w-12 backdrop-blur-sm shadow-lg"
                             onClick={() => setIsLightboxOpen(false)}
                             aria-label="Close gallery"
                         >
-                            <X className="h-6 w-6 md:h-8 md:w-8" />
+                            <X className="h-6 w-6" />
                         </Button>
 
-                        <div className="overflow-hidden w-full h-full md:rounded-2xl" ref={lightboxRef}>
+                        <div className="overflow-hidden w-full h-full" ref={lightboxRef}>
                             <div className="flex h-full items-center">
                                 {validImages.map((src, index) => (
                                     <div key={index} className="flex-[0_0_100%] min-w-0 h-full flex items-center justify-center p-0">
@@ -158,22 +160,22 @@ export default function PropertyHeaderGallery({ images = [], title = "Property" 
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12 hidden md:flex"
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-black/90 rounded-full h-12 w-12 backdrop-blur-sm z-[100] shadow-lg"
                                     onClick={lightboxScrollPrev}
                                 >
-                                    <ChevronLeft className="h-10 w-10" />
+                                    <ChevronLeft className="h-8 w-8" />
                                 </Button>
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12 hidden md:flex"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/70 hover:bg-black/90 rounded-full h-12 w-12 backdrop-blur-sm z-[100] shadow-lg"
                                     onClick={lightboxScrollNext}
                                 >
-                                    <ChevronRight className="h-10 w-10" />
+                                    <ChevronRight className="h-8 w-8" />
                                 </Button>
                                 
                                 {/* Counter in Lightbox */}
-                                <div className="absolute top-6 left-6 text-white/80 font-medium text-sm z-[160]">
+                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white bg-black/70 backdrop-blur-sm px-4 py-2 rounded-full font-medium text-sm z-[100] shadow-lg">
                                     {selectedIndex + 1} / {validImages.length}
                                 </div>
                             </>

@@ -133,7 +133,7 @@ export default function PropertyHeaderGallery({ images = [], title = "Property" 
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="absolute top-2 right-2 md:top-4 md:right-4 text-white hover:text-white bg-black/70 hover:bg-white/20 rounded-full z-[100] h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm shadow-lg active:bg-black/70"
+                            className="absolute top-4 right-4 text-white hover:text-white bg-black/70 hover:bg-white/20 rounded-full z-[100] h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm shadow-lg active:bg-black/70"
                             onClick={() => setIsLightboxOpen(false)}
                             aria-label="Close gallery"
                         >
@@ -160,18 +160,18 @@ export default function PropertyHeaderGallery({ images = [], title = "Property" 
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 text-white hover:text-white bg-black/70 hover:bg-white/20 active:bg-black/70 rounded-full h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm z-[100] shadow-lg"
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-white bg-black/70 hover:bg-white/20 active:bg-black/70 rounded-full h-12 w-12 backdrop-blur-sm z-[100] shadow-lg hidden md:flex"
                                     onClick={lightboxScrollPrev}
                                 >
-                                    <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
+                                    <ChevronLeft className="h-8 w-8" />
                                 </Button>
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 text-white hover:text-white bg-black/70 hover:bg-white/20 active:bg-black/70 rounded-full h-10 w-10 md:h-12 md:w-12 backdrop-blur-sm z-[100] shadow-lg"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-white bg-black/70 hover:bg-white/20 active:bg-black/70 rounded-full h-12 w-12 backdrop-blur-sm z-[100] shadow-lg hidden md:flex"
                                     onClick={lightboxScrollNext}
                                 >
-                                    <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />
+                                    <ChevronRight className="h-8 w-8" />
                                 </Button>
                                 
                                 {/* Counter in Lightbox */}

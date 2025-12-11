@@ -48,7 +48,7 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
         });
         
         // El backend devuelve { message, data }
-        setBlockedDates(prev => [...prev, res.data]);
+        setBlockedDates(prev => [...prev, res]);
       }
     } catch (error) {
       console.error("Error updating calendar", error);

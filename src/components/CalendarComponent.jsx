@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Availability } from '@/api/client';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isBefore, startOfToday } from 'date-fns';
+import { 
+  format, startOfMonth, endOfMonth, eachDayOfInterval, 
+  isSameMonth, isBefore, startOfToday,
+  addMonths, subMonths 
+} from 'date-fns';
 import { es } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Lock, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 export default function CalendarComponent({ propertyId, isOwner = false }) {
@@ -12,47 +16,50 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
 
   const fetchAvailability = async () => {
     setIsLoading(true);
-    // Fetch all dates for this property
-    // Optimally we would filter by date range, but for simplicity we fetch all for this property
+
     const records = await Availability.filter({
       property_id: propertyId
     });
-    setBlockedDates(records.data || []);
+
+    // 🔥 NORMALIZAMOS LAS FECHAS AQUÍ
+    const normalized = (records.data || []).map(r => ({
+      ...r,
+      date: r.date.split("T")[0]
+    }));
+
+    setBlockedDates(normalized);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    if (propertyId) {
-      fetchAvailability();
-    }
+    if (propertyId) fetchAvailability();
   }, [propertyId]);
 
   const toggleDate = async (day) => {
-    if (!isOwner) return; // Only owners can toggle
-    if (isBefore(day, startOfToday())) return; // Cannot change past
+    if (!isOwner) return;
+    if (isBefore(day, startOfToday())) return;
 
     const dateStr = format(day, 'yyyy-MM-dd');
     const existingRecord = blockedDates.find(d => d.date === dateStr);
 
     try {
       if (existingRecord) {
-        // Unblock (delete)
+        // Unblock
         await Availability.delete(existingRecord.id);
         setBlockedDates(prev => prev.filter(d => d.id !== existingRecord.id));
       } else {
-        // Block (create)
+        // Block
         const res = await Availability.create({
           property_id: propertyId,
           date: dateStr,
           reason: 'owner_occupied'
         });
-        
-        // Normalizar fecha siempre a yyyy-MM-dd
+
         const newRecord = {
           ...res,
           date: dateStr
         };
-        
+
         setBlockedDates(prev => [...prev, newRecord]);
       }
     } catch (error) {
@@ -75,8 +82,12 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
           {format(currentDate, 'MMMM yyyy', { locale: es })}
         </h3>
         <div className="flex gap-2">
-          <button onClick={prevMonth} className="p-2 hover:bg-neutral-50 rounded-full"><ChevronLeft size={18} /></button>
-          <button onClick={nextMonth} className="p-2 hover:bg-neutral-50 rounded-full"><ChevronRight size={18} /></button>
+          <button onClick={prevMonth} className="p-2 hover:bg-neutral-50 rounded-full">
+            <ChevronLeft size={18} />
+          </button>
+          <button onClick={nextMonth} className="p-2 hover:bg-neutral-50 rounded-full">
+            <ChevronRight size={18} />
+          </button>
         </div>
       </div>
 
@@ -89,8 +100,6 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
       </div>
 
       <div className="grid grid-cols-7 gap-1">
-        {/* Empty cells for start of month offset if needed (simplified here, date-fns grid handles most) */}
-        {/* We use grid-cols-7 so we might need prefix empty divs based on getDay() of first day */}
         {Array.from({ length: startOfMonth(currentDate).getDay() }).map((_, i) => (
           <div key={`empty-${i}`} />
         ))}
@@ -99,14 +108,14 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
           const dateStr = format(day, 'yyyy-MM-dd');
           const isBlocked = blockedDates.some(d => d.date === dateStr);
           const isPast = isBefore(day, startOfToday());
-          
+
           return (
             <button
               key={day.toString()}
               onClick={() => toggleDate(day)}
               disabled={!isOwner || isPast}
               className={cn(
-                "aspect-square flex items-center justify-center text-sm rounded-full transition-all duration-200 relative group",
+                "aspect-square flex items-center justify-center text-sm rounded-full transition-all duration-200 relative",
                 !isSameMonth(day, currentDate) && "text-neutral-300",
                 isBlocked 
                   ? "bg-neutral-900 text-white hover:bg-neutral-800" 
@@ -116,9 +125,6 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
               )}
             >
               <span className="relative z-10">{format(day, 'd')}</span>
-              {isBlocked && isOwner && (
-                <span className="absolute bottom-1 w-1 h-1 bg-white rounded-full"></span>
-              )}
             </button>
           );
         })}
@@ -134,7 +140,7 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
           <span>Ocupado / No disponible</span>
         </div>
       </div>
-      
+
       {isOwner && (
         <p className="text-center text-xs text-neutral-400 mt-4 pt-4 border-t border-neutral-100">
           Haz clic en una fecha para bloquearla o desbloquearla.

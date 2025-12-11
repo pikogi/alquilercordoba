@@ -41,12 +41,14 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
         setBlockedDates(prev => prev.filter(d => d.id !== existingRecord.id));
       } else {
         // Block (create)
-        const newRecord = await Availability.create({
+        const res = await Availability.create({
           property_id: propertyId,
           date: dateStr,
           reason: 'owner_occupied'
         });
-        setBlockedDates(prev => [...prev, newRecord]);
+        
+        // El backend devuelve { message, data }
+        setBlockedDates(prev => [...prev, res.data]);
       }
     } catch (error) {
       console.error("Error updating calendar", error);

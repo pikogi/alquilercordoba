@@ -4,11 +4,36 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Parse JSON fields
+// --- Function to normalize Postgres TEXT[] or CSV fields ---
+const normalizeArray = (val) => {
+  if (!val) return [];
+
+  // Already array → OK
+  if (Array.isArray(val)) return val;
+
+  // Case: "{Wifi,Cocina}" PostgreSQL TEXT[]
+  if (typeof val === "string" && val.startsWith("{") && val.endsWith("}")) {
+    return val
+      .slice(1, -1) // remove { }
+      .split(",")   // split by comma
+      .map(v => v.replace(/"/g, "").trim()); // remove quotes
+  }
+
+  // Case: "Wifi,Cocina"
+  if (typeof val === "string") {
+    return val
+      .split(",")
+      .map(v => v.replace(/"/g, "").trim());
+  }
+
+  return [];
+};
+
+// Parse JSON / TEXT[] fields safely
 const parseProperty = (prop) => ({
   ...prop,
-  images: prop.images || [],
-  amenities: prop.amenities || [],
+  images: normalizeArray(prop.images),
+  amenities: normalizeArray(prop.amenities),
   price_per_night: prop.price_per_night || 0,
   capacity: prop.capacity || 0
 });
@@ -101,7 +126,6 @@ router.put('/:id', authenticate, async (req, res) => {
 
     const property = properties[0];
 
-    // Check ownership or admin
     if (property.owner_email !== req.user.email && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Forbidden' });
     }
@@ -146,7 +170,6 @@ router.delete('/:id', authenticate, async (req, res) => {
 
     const property = properties[0];
 
-    // Check ownership or admin
     if (property.owner_email !== req.user.email && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Forbidden' });
     }

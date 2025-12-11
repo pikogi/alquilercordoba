@@ -47,8 +47,13 @@ export default function CalendarComponent({ propertyId, isOwner = false }) {
           reason: 'owner_occupied'
         });
         
-        // El backend devuelve { message, data }
-        setBlockedDates(prev => [...prev, res]);
+        // Normalizar fecha siempre a yyyy-MM-dd
+        const newRecord = {
+          ...res,
+          date: dateStr
+        };
+        
+        setBlockedDates(prev => [...prev, newRecord]);
       }
     } catch (error) {
       console.error("Error updating calendar", error);

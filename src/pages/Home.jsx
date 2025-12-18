@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function Home() {
   const [properties, setProperties] = useState([]);
+  const [allProperties, setAllProperties] = useState([]);
   const [allAvailability, setAllAvailability] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -25,7 +26,7 @@ export default function Home() {
   const [guests, setGuests] = useState('');
   const [date, setDate] = useState({ from: undefined, to: undefined });
 
-  const uniqueLocations = Array.from(new Set(properties.map(p => p.location).filter(Boolean)));
+  const uniqueLocations = Array.from(new Set(allProperties.map(p => p.location).filter(Boolean)));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +58,7 @@ export default function Home() {
             console.error("Error fetching availability", e);
         }
         
+        setAllProperties(props);
         setProperties(props);
         setTotal(totalCount);
         setAllAvailability(avail);
@@ -71,8 +73,8 @@ export default function Home() {
 
   useEffect(() => {
     // Filtrado sólo por rango de fechas del lado del cliente,
-    // usando las propiedades ya paginadas y la disponibilidad global.
-    let filtered = properties;
+    // usando las propiedades ya paginadas (allProperties) y la disponibilidad global.
+    let filtered = allProperties;
 
     if (date?.from && date?.to) {
        filtered = filtered.filter(p => {
@@ -86,7 +88,7 @@ export default function Home() {
     }
     
     setProperties(filtered);
-  }, [date, allAvailability]);
+  }, [date, allAvailability, allProperties]);
 
   return (
     <div className="pb-20">

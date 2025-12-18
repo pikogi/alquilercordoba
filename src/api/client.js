@@ -71,7 +71,14 @@ export const auth = {
 // Properties methods
 export const Property = {
   async list(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
+    // Limpiar parámetros vacíos/undefined para no enviar "undefined" como string
+    const cleaned = {};
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        cleaned[key] = value;
+      }
+    });
+    const queryString = new URLSearchParams(cleaned).toString();
     return await apiCall(`/properties${queryString ? `?${queryString}` : ''}`);
   },
 

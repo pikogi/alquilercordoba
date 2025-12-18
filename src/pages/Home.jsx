@@ -236,8 +236,9 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin text-neutral-300" />
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <Loader2 className="animate-spin text-neutral-300 w-8 h-8" />
+            <p className="text-sm text-neutral-500">Cargando propiedades... (puede tardar unos segundos)</p>
           </div>
         ) : (
           <>

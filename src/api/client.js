@@ -70,8 +70,9 @@ export const auth = {
 
 // Properties methods
 export const Property = {
-  async list() {
-    return await apiCall('/properties');
+  async list(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    return await apiCall(`/properties${queryString ? `?${queryString}` : ''}`);
   },
 
   async filter(params) {

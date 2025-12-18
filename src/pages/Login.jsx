@@ -134,19 +134,7 @@ export default function Login() {
             </Button>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-neutral-100">
-            <p className="text-sm text-neutral-500 text-center mb-4">Usuarios de prueba:</p>
-            <div className="space-y-2 text-xs text-neutral-400">
-              <div className="bg-neutral-50 p-3 rounded">
-                <div className="font-medium text-neutral-600">Admin:</div>
-                <div>admin@example.com / admin123</div>
-              </div>
-              <div className="bg-neutral-50 p-3 rounded">
-                <div className="font-medium text-neutral-600">Propietario:</div>
-                <div>propietario@example.com / password123</div>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

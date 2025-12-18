@@ -60,3 +60,4 @@ Si GitHub te pide autenticación, usa un **Personal Access Token** en lugar de t
 ¡Listo! Tu código estará en GitHub. Luego sigue las instrucciones en `DEPLOY.md` para deployar en Vercel.
 
 
+

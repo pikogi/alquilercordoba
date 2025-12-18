@@ -57,12 +57,6 @@ export default function Layout({ children }) {
               </div>
             ) : (
               <>
-                <button 
-                  onClick={handleLogin}
-                  className="px-5 py-2 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-all duration-300 text-xs uppercase tracking-wider"
-                >
-                  Iniciar Sesión
-                </button>
                 <a 
                   href="https://wa.me/5493572502550?text=Hola,%20esta%20es%20la%20propiedad%20que%20quisiera%20que%20me%20administren:"
                   target="_blank"
@@ -91,9 +85,6 @@ export default function Layout({ children }) {
               </>
             ) : (
               <>
-                <button onClick={handleLogin} className="text-lg text-left">
-                  Iniciar Sesión
-                </button>
                 <a 
                   href="https://wa.me/5493572502550?text=Hola,%20esta%20es%20la%20propiedad%20que%20quisiera%20que%20me%20administren:"
                   target="_blank"

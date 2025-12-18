@@ -14,27 +14,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function Home() {
   const [properties, setProperties] = useState([]);
-  const [allProperties, setAllProperties] = useState([]);
   const [allAvailability, setAllAvailability] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(9);
+  const [total, setTotal] = useState(0);
   
   // Filters
   const [locationFilter, setLocationFilter] = useState('');
   const [guests, setGuests] = useState('');
   const [date, setDate] = useState({ from: undefined, to: undefined });
 
-  const uniqueLocations = Array.from(new Set(allProperties.map(p => p.location).filter(Boolean)));
+  const uniqueLocations = Array.from(new Set(properties.map(p => p.location).filter(Boolean)));
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch properties
+        // Fetch properties con paginación y filtros básicos
         let props = [];
+        let totalCount = 0;
         try {
-            const propRes = await Property.list();
-            props = Array.isArray(propRes) ? propRes : (propRes.data || []);
+          const propRes = await Property.list({
+            page,
+            pageSize,
+            location: locationFilter && locationFilter !== 'all_locations_clear_filter' ? locationFilter : undefined,
+            minCapacity: guests || undefined,
+          });
+          const data = Array.isArray(propRes) ? propRes : (propRes.data || []);
+          props = data;
+          const pagination = propRes.pagination || {};
+          totalCount = pagination.total || data.length || 0;
         } catch (e) {
-            console.error("Error fetching properties", e);
+          console.error("Error fetching properties", e);
         }
 
         // Fetch availability - use .list() correctly without query object
@@ -46,8 +57,8 @@ export default function Home() {
             console.error("Error fetching availability", e);
         }
         
-        setAllProperties(props);
         setProperties(props);
+        setTotal(totalCount);
         setAllAvailability(avail);
       } catch (error) {
         console.error("Failed to fetch data", error);
@@ -56,20 +67,12 @@ export default function Home() {
       }
     };
     fetchData();
-  }, []);
+  }, [page, pageSize, locationFilter, guests]);
 
   useEffect(() => {
-    let filtered = allProperties;
-    
-    if (locationFilter && locationFilter !== 'all_locations_clear_filter') {
-      filtered = filtered.filter(p => 
-        p.location?.toLowerCase().includes(locationFilter.toLowerCase())
-      );
-    }
-    
-    if (guests) {
-      filtered = filtered.filter(p => (p.capacity || 0) >= parseInt(guests));
-    }
+    // Filtrado sólo por rango de fechas del lado del cliente,
+    // usando las propiedades ya paginadas y la disponibilidad global.
+    let filtered = properties;
 
     if (date?.from && date?.to) {
        filtered = filtered.filter(p => {
@@ -83,7 +86,7 @@ export default function Home() {
     }
     
     setProperties(filtered);
-  }, [locationFilter, guests, date, allProperties, allAvailability]);
+  }, [date, allAvailability]);
 
   return (
     <div className="pb-20">
@@ -235,18 +238,62 @@ export default function Home() {
             <Loader2 className="animate-spin text-neutral-300" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-            {properties.map((prop, idx) => (
-              <motion.div
-                key={prop.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-              >
-                <PropertyCard property={prop} />
-              </motion.div>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+              {properties.map((prop, idx) => (
+                <motion.div
+                  key={prop.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                >
+                  <PropertyCard property={prop} />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Paginación */}
+            {total > pageSize && (
+              <div className="mt-12 flex flex-col items-center gap-4">
+                <p className="text-sm text-neutral-500">
+                  Mostrando{" "}
+                  <span className="font-medium">
+                    {Math.min((page - 1) * pageSize + 1, total)}–{Math.min(page * pageSize, total)}
+                  </span>{" "}
+                  de <span className="font-medium">{total}</span> propiedades
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    disabled={page === 1}
+                    onClick={() => {
+                      const next = Math.max(1, page - 1);
+                      setPage(next);
+                      document.getElementById('properties-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="rounded-full px-4 h-9 text-xs"
+                  >
+                    Anterior
+                  </Button>
+                  <span className="text-xs text-neutral-500 px-3 py-1 rounded-full border border-neutral-200">
+                    Página {page}
+                  </span>
+                  <Button
+                    variant="outline"
+                    disabled={page * pageSize >= total}
+                    onClick={() => {
+                      const next = page + 1;
+                      setPage(next);
+                      document.getElementById('properties-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="rounded-full px-4 h-9 text-xs"
+                  >
+                    Siguiente
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {!loading && properties.length === 0 && (

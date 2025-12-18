@@ -220,3 +220,4 @@ origin: process.env.FRONTEND_URL || 'http://localhost:5175'
 ¡Listo! Tu aplicación debería estar funcionando en producción. 🎉
 
 
+
